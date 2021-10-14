@@ -10,7 +10,7 @@ const assets = {
       id: 1,
       name: "Heavy Club",
       damage: 8,
-      moves: [1, 6, 9]
+      moves: [1, 9, 6]
     },
     2: {
       id: 2,
@@ -117,7 +117,7 @@ const assets = {
         id: 8,
         name: "Slash",
         damage: 6,
-        accuracy: 0.75,
+        accuracy: 0.7,
       },
       9: {
         id: 9,
@@ -322,7 +322,7 @@ const newEncounter = () => {
   console.log ("You find yourself in " + scene.name)
   console.log("In front of you you see a " + enemy.name)
   console.log()
-  console.log("You have " + player.hp + " hp and " + player.gold + " gold")
+  console.log("You have " + player.hp + " hp")
 }
 
 const usePlayerMenu = async () => {
@@ -370,7 +370,8 @@ const useAbilityMenu = async () => {
   const options = ["0"]
   console.log("")
   console.log("0. Cancel")
-  Object.values(assets.moves.player).filter(x => currentWeapon.moves.includes(x.id)).forEach((move, index) => {
+  Object.values(currentWeapon.moves).forEach((moveId, index) => {
+    const move = assets.moves.player[moveId]
     options.push((index + 1) + "")
     console.log((index + 1) + ". " + move.name)
   })
@@ -490,6 +491,8 @@ const main = async () => {
   while (encounter.enemy.hp > 0){
     if (player.hp < 0) {
       console.log ("YOU DIED")
+      console.log("")
+      console.log("Your score is : " + player.gold + " gold")
       lineBreak()
       start()
     } else {
