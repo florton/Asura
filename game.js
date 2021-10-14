@@ -28,7 +28,7 @@ const assets = {
       id: 3,
       name: "Katana",
       damage: 5,
-      moves: [1, 7, 2]
+      moves: [1, 2, 7]
     },
     4: {
       id: 4,
@@ -230,7 +230,8 @@ const assets = {
 
 // ---------------------------------------------
 
-const prompt = require('prompt');
+const prompt = require('prompt')
+const waitForEnter = require('wait-for-enter')
 
 prompt.start()
 prompt.message = ''
@@ -321,8 +322,6 @@ const newEncounter = () => {
   lineBreak()
   console.log ("You find yourself in " + scene.name)
   console.log("In front of you you see a " + enemy.name)
-  console.log()
-  console.log("You have " + player.hp + " hp")
 }
 
 const usePlayerMenu = async () => {
@@ -387,8 +386,8 @@ const useAbilityMenu = async () => {
 
 const calculateDamage = (attacker, defender, move, isPlayer = false) => {
   console.log("")
-  const youIt = isPlayer ? "You" : "The enemy"
-  const maybeS = isPlayer ? "" : "s"
+  let youIt = isPlayer ? "You" : "The enemy"
+  let maybeS = isPlayer ? "" : "s"
   if (rand() < move.accuracy) {
     if (move.damage > 0) {
       const attackerDamage = attacker.damage || assets.weapons[attacker.equip.weapon].damage
@@ -416,10 +415,12 @@ const calculateDamage = (attacker, defender, move, isPlayer = false) => {
         if (type.endsWith("damage")){
           if (isBuff){
             attacker.buffs.attack *= value
-            console.log(youIt + " feel" + maybeS + " stronger")
+            console.log(youIt + " grow" + maybeS + " stronger")
           } else {
+            youIt = isPlayer ? "The enemy" : "You"
+            maybeS = isPlayer ? "s" : ""
             defender.buffs.attack *= value
-            console.log(youIt + " feel" + maybeS + " weaker")
+            console.log(youIt + " grow" + maybeS + " weaker")
           }
         }
       }
@@ -488,8 +489,10 @@ const main = async () => {
   newEncounter ()
   lineBreak()
 
+  await waitForEnter();
+
   while (encounter.enemy.hp > 0){
-    if (player.hp < 0) {
+    if (player.hp <= 0) {
       console.log ("YOU DIED")
       console.log("")
       console.log("Your score is : " + player.gold + " gold")
@@ -507,7 +510,13 @@ const main = async () => {
 
   console.log("You beat the " + encounter.enemy.name + "!")
   console.log("")
+  console.log("You have " + player.hp + " hp")
+  console.log("")
   getLoot()
+
+  console.log("")
+  console.log("Press enter to continue")
+  await waitForEnter();
 
   main()
 }
